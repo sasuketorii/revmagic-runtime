@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Install Rust 1.86.0
+        run: rustup toolchain install 1.86.0 --profile minimal
+      - name: Install media test dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Format
+        run: cargo +1.86.0 fmt --check
+      - name: Build
+        run: cargo +1.86.0 build --locked --release -p revmagic-cli -p revmagic-mcp
+      - name: Test
+        run: cargo +1.86.0 test --locked --workspace
+      - name: Clippy
+        run: cargo +1.86.0 clippy --locked --workspace --all-targets -- -D warnings

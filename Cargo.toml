@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = [
+  "crates/revmagic-core",
+  "crates/revmagic-cli",
+  "crates/revmagic-mcp",
+]

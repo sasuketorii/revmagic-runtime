@@ -1,0 +1,19 @@
+[package]
+name = "revmagic-mcp"
+version = "0.2.7"
+description = "desktop host-independent stdio MCP server for RevMagic (URL -> MP3, cookie/referer pass-through)"
+edition = "2021"
+rust-version = "1.86.0"
+license = "MIT"
+repository = "https://github.com/sasuketorii/revmagic-runtime.git"
+
+[[bin]]
+name = "revmagic-mcp"
+path = "src/main.rs"
+
+[dependencies]
+revmagic-core = { path = "../revmagic-core" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+url = "2"

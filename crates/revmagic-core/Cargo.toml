@@ -1,0 +1,34 @@
+[package]
+name = "revmagic-core"
+version = "0.2.7"
+description = "desktop host-independent conversion/download core for RevMagic"
+edition = "2021"
+rust-version = "1.86.0"
+license = "MIT"
+repository = "https://github.com/sasuketorii/revmagic-runtime.git"
+
+[lib]
+name = "revmagic_core"
+crate-type = ["rlib"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream", "http2"] }
+futures-util = "0.3"
+# `time` / `macros` は直リンク DL の await を cancel トークンと race させる
+# (`tokio::select!` + `tokio::time::sleep`) ために必要 (Slice I-1c 指摘1)。
+# 無音接続 (send/body 受信が無音) でも ~100ms でキャンセルへ反応させる。
+tokio = { version = "1", features = ["fs", "io-util", "time", "macros"] }
+url = "2"
+
+[dev-dependencies]
+# timeout.rs の download_media redaction テストで async fn を駆動するための
+# ランタイム (テスト専用; 本番依存サーフェスは変えない)。
+tokio = { version = "1", features = ["rt", "macros"] }
+
+[target.'cfg(unix)'.dependencies]
+# deadline 超過時に yt-dlp の **プロセスグループごと** kill するために使う
+# (yt-dlp が spawn する ffmpeg 等の子孫まで殺し、stdout/stderr の FD を解放させて
+# reader thread を EOF へ導く)。auth helper 経路で既に Cargo.lock に存在する。
+libc = "0.2"
